@@ -1,7 +1,8 @@
+import Markdown from "@/components/Markdown";
 import { db } from "@/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import Link from "next/link";
-import { ReactMarkdown } from "react-markdown/lib/react-markdown";
+import ReactMarkdown from "react-markdown";
 
 type Props = {
   params: {
@@ -32,6 +33,7 @@ export default async function PostPage({ params }: Props) {
       </div>
       {/* <h2>{data.title}</h2> */}
       <article className="prose max-w-none">
+        {/* <Markdown markdown={data.content} /> */}
         <ReactMarkdown>{data.content}</ReactMarkdown>
       </article>
     </main>
