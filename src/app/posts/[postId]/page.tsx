@@ -33,8 +33,8 @@ export default async function PostPage({ params }: Props) {
       </div>
       {/* <h2>{data.title}</h2> */}
       <article className="prose max-w-none">
-        {/* <Markdown markdown={data.content} /> */}
-        <ReactMarkdown>{data.content}</ReactMarkdown>
+        <Markdown markdown={data.content} />
+        {/* <ReactMarkdown>{data.content}</ReactMarkdown> */}
       </article>
     </main>
   );
