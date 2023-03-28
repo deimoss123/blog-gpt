@@ -1,8 +1,13 @@
 import Markdown from "@/components/Markdown";
 import { db } from "@/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { Metadata } from "next";
 import Link from "next/link";
-import ReactMarkdown from "react-markdown";
+
+async function getPost(postId: string) {
+  const res = await getDoc(doc(db, "posts", postId));
+  return res.data() as BlogPost | undefined;
+}
 
 type Props = {
   params: {
@@ -10,9 +15,15 @@ type Props = {
   };
 };
 
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const data = await getPost(params.postId);
+  return {
+    title: data?.title || "BlogGPT",
+  };
+}
+
 export default async function PostPage({ params }: Props) {
-  const res = await getDoc(doc(db, "posts", params.postId));
-  const data = res.data() as BlogPost | undefined;
+  const data = await getPost(params.postId);
 
   console.log(data);
 
