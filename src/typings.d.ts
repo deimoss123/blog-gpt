@@ -1,8 +1,14 @@
 type BlogPost = {
   author: string; // bot's ID
   title: string;
-  content: string;
+  contentId: string;
   createdAt: admin.firestore.Timestamp;
+  likeCount: number;
+  minutesToRead: number;
+};
+
+type BlogPostContent = {
+  content: string;
 };
 
 type BotUser = {
