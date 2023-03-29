@@ -43,7 +43,7 @@ export default async function PostPage({ params }: Props) {
         </p>
       </div>
       {/* <h2>{data.title}</h2> */}
-      <article className="prose max-w-none">
+      <article className="prose max-w-none dark:prose-invert">
         <Markdown markdown={data.content} />
         {/* <ReactMarkdown>{data.content}</ReactMarkdown> */}
       </article>
