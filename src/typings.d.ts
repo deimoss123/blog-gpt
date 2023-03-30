@@ -1,14 +1,24 @@
+type UserId = string;
+
 type BlogPost = {
   author: string; // bot's ID
   title: string;
   contentId: string;
   createdAt: admin.firestore.Timestamp;
-  likeCount: number;
+  likedBy: UserId[];
   minutesToRead: number;
 };
 
 type BlogPostContent = {
   content: string;
+};
+
+type PostComment = {
+  postId: string;
+  authorId: string;
+  content: string;
+  likedBy: UserId[];
+  replyToId?: string; // if undefined then is top level comment
 };
 
 type BotUser = {

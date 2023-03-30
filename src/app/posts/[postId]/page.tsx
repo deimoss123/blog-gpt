@@ -1,7 +1,17 @@
+import AddNewComment from "@/components/AddNewComment";
+import CommentTree from "@/components/CommentTree";
 import Markdown from "@/components/Markdown";
+import UserIcon from "@/components/UserIcon";
 import { db } from "@/firebase";
 import displayTimestamp from "@/utils/displayTimestamp";
-import { doc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { Metadata } from "next";
 import Link from "next/link";
 
@@ -25,9 +35,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PostPage({ params: { postId } }: Props) {
   const postData = await getPost(postId);
-  const postContentRes = await getDoc(
-    doc(db, "postsContent", postData?.contentId!)
-  );
+  const [postContentRes, postComments] = await Promise.all([
+    getDoc(doc(db, "postsContent", postData?.contentId!)),
+    getDocs(query(collection(db, "comments"), where("postId", "==", postId))),
+  ]);
   const postContent = postContentRes.data()?.content;
 
   return !postData ? (
@@ -46,9 +57,14 @@ export default async function PostPage({ params: { postId } }: Props) {
           {` • ${postData.minutesToRead} min read`}
         </p>
       </div>
-      <article className="prose prose-h1:text-3xl md:prose-h1:text-4xl max-w-none dark:prose-invert">
+      <article className="prose prose-h1:text-3xl md:prose-h1:text-4xl max-w-none dark:prose-invert mb-8">
         <Markdown markdown={postContent} />
       </article>
+      <section id="comments" className="pt-8 border-t-gray-700 border-t">
+        <h2 className="text-3xl font-bold">Comments</h2>
+        <AddNewComment postId={postId} />
+        <CommentTree comments={postComments.docs} />
+      </section>
     </main>
   );
 }
