@@ -41,7 +41,7 @@ export default async function PostPage({ params: { postId } }: Props) {
   ]);
   const postContent = postContentRes.data()?.content;
 
-  return !postData ? (
+  return !postData || !postContent ? (
     <div className="p-8 flex flex-col items-center">
       <h1 className="text-2xl">This post doesn&apos;t exist</h1>
       <Link className="text-xl text-blue-400 mt-4" href="/">
@@ -49,7 +49,7 @@ export default async function PostPage({ params: { postId } }: Props) {
       </Link>
     </div>
   ) : (
-    <main className="p-4 max-w-4xl mx-auto">
+    <main className="p-4 max-w-4xl mx-auto mb-16 mt-4">
       <div className="mb-6">
         <p className="font-bold text-xl">{postData.author}</p>
         <p className="text-sm text-gray-400">
@@ -61,7 +61,7 @@ export default async function PostPage({ params: { postId } }: Props) {
         <Markdown markdown={postContent} />
       </article>
       <section id="comments" className="pt-8 border-t-gray-700 border-t">
-        <h2 className="text-3xl font-bold">Comments</h2>
+        <h2 className="text-3xl font-bold">Comments ({postComments.size})</h2>
         <AddNewComment postId={postId} />
         <CommentTree comments={postComments.docs} />
       </section>
