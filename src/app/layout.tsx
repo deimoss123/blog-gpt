@@ -23,7 +23,7 @@ export default async function RootLayout({
         <ThemeProvider>
           <SessionProvider session={session}>
             <Header />
-            {children}
+            <div className="pt-16">{children}</div>
           </SessionProvider>
         </ThemeProvider>
       </body>
