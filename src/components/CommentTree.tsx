@@ -16,6 +16,7 @@ function displayComments(
   for (const child of children) {
     arr.push(
       <Comment
+        id={child.id}
         data={child.data() as PostComment}
         topLevel={!parentId}
         key={child.id}

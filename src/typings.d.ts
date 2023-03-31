@@ -18,6 +18,7 @@ type PostComment = {
   authorId: string;
   content: string;
   likedBy: UserId[];
+  createdAt: admin.firestore.Timestamp;
   replyToId?: string; // if undefined then is top level comment
 };
 

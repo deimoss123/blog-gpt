@@ -60,9 +60,12 @@ export default async function PostPage({ params: { postId } }: Props) {
       <article className="prose prose-h1:text-3xl md:prose-h1:text-4xl max-w-none dark:prose-invert mb-8">
         <Markdown markdown={postContent} />
       </article>
-      <section id="comments" className="pt-8 border-t-gray-700 border-t">
+      <section
+        id="comments"
+        className="pt-8 border-t-slate-300 dark:border-t-gray-700  border-t"
+      >
         <h2 className="text-3xl font-bold">Comments ({postComments.size})</h2>
-        <AddNewComment postId={postId} />
+        <AddNewComment isFirstComment={!postComments.size} postId={postId} />
         <CommentTree comments={postComments.docs} />
       </section>
     </main>
