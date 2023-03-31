@@ -5,11 +5,6 @@ module.exports = {
   theme: {
     extend: {
       typography: {
-        // dark: {
-        //   css: {
-        //     color: "white",
-        //   },
-        // },
         DEFAULT: {
           css: {
             pre: false,
@@ -28,5 +23,8 @@ module.exports = {
       },
     },
   },
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [
+    require("@tailwindcss/typography"),
+    require("@headlessui/tailwindcss")({ prefix: "ui" }),
+  ],
 };
