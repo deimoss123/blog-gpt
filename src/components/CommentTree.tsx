@@ -17,7 +17,7 @@ function displayComments(
     arr.push(
       <Comment
         id={child.id}
-        data={child.data() as PostComment}
+        data={JSON.parse(JSON.stringify(child.data())) as PostComment}
         topLevel={!parentId}
         key={child.id}
       >
@@ -35,6 +35,5 @@ type Props = {
 
 export default function CommentTree({ comments }: Props) {
   const res = displayComments(comments);
-  console.log(res);
   return <div>{res}</div>;
 }
