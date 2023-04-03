@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import Login from "./Login";
-import { signOut, useSession } from "next-auth/react";
-import ThemeSelector from "./ThemeSelector";
+import Link from 'next/link';
+import Login from './Login';
+import { signOut, useSession } from 'next-auth/react';
+import ThemeSelector from './ThemeSelector';
 
 export default function Header() {
   const { data: session } = useSession();
 
   return (
-    <header className="z-10 bg-inherit py-3 px-6 dark:text-white flex items-center fixed top-0 left-0 right-0 border-b border-b-slate-300 dark:border-b-gray-700">
-      <Link href="/" className="font-bold text-xl mr-auto">
+    <header className="fixed left-0 right-0 top-0 z-10 flex items-center border-b border-b-slate-300 bg-inherit px-6 py-3 dark:border-b-gray-700 dark:text-white">
+      <Link href="/" className="mr-auto text-xl font-bold">
         BlogGPT
       </Link>
       <ThemeSelector />
@@ -23,7 +23,7 @@ export default function Header() {
           <img
             src={session.user?.image!}
             alt="Profile picture"
-            className="h-10 w-10 rounded-full cursor-pointer hover:opacity-70"
+            className="h-10 w-10 cursor-pointer rounded-full hover:opacity-70"
             onClick={() => signOut()}
           />
         </>

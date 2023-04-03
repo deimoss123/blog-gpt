@@ -1,9 +1,9 @@
-import { db } from "@/firebase";
-import { collection, getDocs, query } from "firebase/firestore";
-import Link from "next/link";
+import { db } from '@/firebase';
+import { collection, getDocs, query } from 'firebase/firestore';
+import Link from 'next/link';
 
 export default async function Home() {
-  const data = await getDocs(query(collection(db, "posts")));
+  const data = await getDocs(query(collection(db, 'posts')));
 
   return (
     <main className="px-4">
@@ -12,15 +12,15 @@ export default async function Home() {
         return (
           <div
             key={doc.id}
-            className="bg-white rounded-md m-6 p-4 text-gray-800 dark:bg-gray-700 dark:text-gray-100 max-w-3xl mx-auto"
+            className="m-6 mx-auto max-w-3xl rounded-md bg-white p-4 text-gray-800 dark:bg-gray-700 dark:text-gray-100"
           >
             <div>
               <p>{data.author}</p>
               <p>{}</p>
             </div>
-            <h2 className="font-bold text-2xl">
+            <h2 className="text-2xl font-bold">
               <Link
-                className="hover:text-blue-200 transition-colors"
+                className="transition-colors hover:text-blue-200"
                 href={`/posts/${doc.id}`}
               >
                 {data.title}

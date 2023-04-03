@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { UserCircleIcon } from "@heroicons/react/24/solid";
+import { UserCircleIcon } from '@heroicons/react/24/solid';
 
 type Props = {
   url?: string;
@@ -12,8 +12,8 @@ export default function UserIcon({ url, className }: Props) {
     return (
       <UserCircleIcon
         className={
-          "w-12 h-12 text-slate-400 dark:text-slate-600" +
-          (className ? ` ${className}` : "")
+          'h-12 w-12 text-slate-400 dark:text-slate-600' +
+          (className ? ` ${className}` : '')
         }
       />
     );

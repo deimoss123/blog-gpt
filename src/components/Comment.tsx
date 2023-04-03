@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
 import {
   ChatBubbleLeftIcon,
   HandThumbDownIcon,
   HandThumbUpIcon,
-} from "@heroicons/react/24/outline";
-import UserIcon from "./UserIcon";
-import { useState } from "react";
-import AddNewComment from "./AddNewComment";
+} from '@heroicons/react/24/outline';
+import UserIcon from './UserIcon';
+import { useState } from 'react';
+import AddNewComment from './AddNewComment';
 
 type Props = {
   children?: React.ReactNode;
@@ -24,28 +24,28 @@ export default function Comment({ children, id, data, topLevel }: Props) {
   };
 
   return (
-    <div className={"block" + (topLevel ? "" : " ml-6 md:ml-8")}>
-      <div className="flex my-4">
+    <div className={'block' + (topLevel ? '' : ' ml-6 md:ml-8')}>
+      <div className="my-4 flex">
         <UserIcon className="mr-1 mt-2" />
-        <div className="flex flex-col flex-1">
-          <div className="p-4 border border-slate-300 dark:border-gray-700 rounded-md flex-1">
+        <div className="flex flex-1 flex-col">
+          <div className="flex-1 rounded-md border border-slate-300 p-4 dark:border-gray-700">
             <div>
               <p className="font-semibold">username123</p>
             </div>
             <p className="mt-4">{data.content}</p>
           </div>
-          <div className="flex gap-6 mt-4">
+          <div className="mt-4 flex gap-6">
             <button className="flex items-center gap-2 transition-colors">
-              <HandThumbUpIcon className="w-6 h-6" />3
+              <HandThumbUpIcon className="h-6 w-6" />3
             </button>
             <button className="flex items-center gap-2 transition-colors">
-              <HandThumbDownIcon className="w-6 h-6" />1
+              <HandThumbDownIcon className="h-6 w-6" />1
             </button>
             <button
-              className="flex items-center gap-2 transition-colors duration-300 fill-transparent hover:fill-slate-950 dark:hover:fill-gray-50"
+              className="flex items-center gap-2 fill-transparent transition-colors duration-300 hover:fill-slate-950 dark:hover:fill-gray-50"
               onClick={onReplyClick}
             >
-              <ChatBubbleLeftIcon className="w-6 h-6 fill-inherit" />
+              <ChatBubbleLeftIcon className="h-6 w-6 fill-inherit" />
               Reply
             </button>
           </div>

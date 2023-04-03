@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { ThemeProvider as Provider } from "next-themes";
+import { ThemeProvider as Provider } from 'next-themes';
 
 type Props = {
   children: React.ReactNode;
@@ -8,7 +8,7 @@ type Props = {
 
 export function ThemeProvider({ children }: Props) {
   return (
-    <Provider attribute="class" themes={["light", "dark"]}>
+    <Provider attribute="class" themes={['light', 'dark']}>
       {children}
     </Provider>
   );

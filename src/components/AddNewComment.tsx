@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import UserIcon from "./UserIcon";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { useSession } from "next-auth/react";
-import { db } from "@/firebase";
-import { useRouter } from "next/navigation";
-import { ArrowPathIcon } from "@heroicons/react/24/solid";
+import { useState } from 'react';
+import UserIcon from './UserIcon';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { useSession } from 'next-auth/react';
+import { db } from '@/firebase';
+import { useRouter } from 'next/navigation';
+import { ArrowPathIcon } from '@heroicons/react/24/solid';
 
 type Props = {
   postId: string;
@@ -24,7 +24,7 @@ export default function AddNewComment({
   isFirstComment,
   avatarUrl,
 }: Props) {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { data: session } = useSession();
   const router = useRouter();
@@ -47,26 +47,26 @@ export default function AddNewComment({
       comment.replyToId = replyOptions.id;
     }
 
-    setInput("");
+    setInput('');
     setIsLoading(true);
-    await addDoc(collection(db, "comments"), comment);
+    await addDoc(collection(db, 'comments'), comment);
     router.refresh();
     if (replyOptions) replyOptions.onClose();
     setIsLoading(false);
   };
 
   return (
-    <div className="flex mt-4">
+    <div className="mt-4 flex">
       {avatarUrl !== null && <UserIcon className="mr-2" url={avatarUrl} />}
       <div className="flex-1">
         <textarea
-          className="bg-transparent border border-slate-300 dark:border-gray-700 rounded-lg w-full p-2 max-h-60 min-h-[4rem]"
+          className="max-h-60 min-h-[4rem] w-full rounded-lg border border-slate-300 bg-transparent p-2 dark:border-gray-700"
           placeholder={
             isFirstComment
-              ? "Be the first to comment!"
+              ? 'Be the first to comment!'
               : replyOptions
-              ? "Reply..."
-              : "Comment on this post"
+              ? 'Reply...'
+              : 'Comment on this post'
           }
           name=""
           id=""
@@ -76,11 +76,11 @@ export default function AddNewComment({
         />
         <div className="mt-2 flex gap-2">
           <button
-            className="px-4 py-2 rounded-lg bg-sky-600 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity flex items-center gap-2 text-white disabled:text-gray-200"
+            className="flex items-center gap-2 rounded-lg bg-sky-600 px-4 py-2 text-white transition-opacity disabled:cursor-not-allowed disabled:text-gray-200 disabled:opacity-50"
             disabled={!canSubmit}
             onClick={onSubmit}
           >
-            {isLoading && <ArrowPathIcon className="w-4 h-4 animate-spin" />}
+            {isLoading && <ArrowPathIcon className="h-4 w-4 animate-spin" />}
             Submit
           </button>
           {replyOptions && (

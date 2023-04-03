@@ -1,5 +1,5 @@
-import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
-import Comment from "./Comment";
+import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
+import Comment from './Comment';
 
 // this can could be done better
 function displayComments(
