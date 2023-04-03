@@ -23,7 +23,7 @@ export default function UserIcon({ url, className }: Props) {
   return (
     <div
       className={
-        'absolute h-11 w-11 overflow-hidden rounded-full' +
+        'relative h-11 w-11 overflow-hidden rounded-full' +
         (className ? ` ${className}` : '')
       }
     >

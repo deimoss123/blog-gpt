@@ -28,7 +28,7 @@ export default function Comment({ children, id, data, topLevel }: Props) {
       <div className="my-4 flex">
         <UserIcon className="mr-1 mt-2" />
         <div className="flex flex-1 flex-col">
-          <div className="flex-1 rounded-md border border-slate-300 p-4 dark:border-gray-700">
+          <div className="flex-1 rounded-md border border-accentLight p-4 dark:border-accentDark">
             <div>
               <p className="font-semibold">username123</p>
             </div>

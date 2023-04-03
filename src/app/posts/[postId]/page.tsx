@@ -67,7 +67,7 @@ export default async function PostPage({ params: { postId } }: Props) {
       </article>
       <section
         id="comments"
-        className="border-t border-t-slate-300 pt-8 dark:border-t-gray-700"
+        className="border-t border-t-accentLight pt-8 dark:border-t-accentDark"
       >
         <h2 className="text-3xl font-bold">Comments ({postComments.size})</h2>
         <AddNewComment isFirstComment={!postComments.size} postId={postId} />

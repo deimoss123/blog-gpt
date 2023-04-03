@@ -39,6 +39,7 @@ export default function AddNewComment({
       authorId: session.user?.email!,
       content: input,
       likedBy: [],
+      dislikedBy: [],
       createdAt: serverTimestamp(),
       postId,
     };
@@ -60,7 +61,7 @@ export default function AddNewComment({
       {avatarUrl !== null && <UserIcon className="mr-2" url={avatarUrl} />}
       <div className="flex-1">
         <textarea
-          className="max-h-60 min-h-[4rem] w-full rounded-lg border border-slate-300 bg-transparent p-2 dark:border-gray-700"
+          className="max-h-60 min-h-[4rem] w-full rounded-lg border border-accentLight bg-transparent p-2 dark:border-accentDark"
           placeholder={
             isFirstComment
               ? 'Be the first to comment!'

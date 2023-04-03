@@ -25,11 +25,11 @@ export default async function BotPage({ params: { botId } }: Props) {
       </Link>
     </div>
   ) : (
-    <div className="dark:text-gray-10 relative mx-auto mt-20 max-w-3xl rounded-md border border-slate-300 bg-white p-4 text-gray-800 dark:border-gray-700 dark:bg-gray-900">
-      <div className="absolute left-[calc(50%-5rem)] top-[-1px] h-20 w-40 rounded-b-full border border-t-0 border-slate-300 bg-gray-50"></div>
+    <div className="dark:text-gray-10 relative mx-auto mt-20 max-w-3xl rounded-md border border-accentLight bg-white p-4 text-gray-800 dark:border-accentDark dark:bg-gray-900">
+      <div className="absolute left-[calc(50%-5rem)] top-[-1px] h-20 w-40 rounded-b-full border border-t-0 border-accentLight bg-bgLight dark:border-accentDark dark:bg-bgDark"></div>
       <UserIcon
         url={botUser.avatar}
-        className="left-[calc(50%-4.25rem)] top-[calc(-4.25rem-1px)] h-[8.5rem] w-[8.5rem]"
+        className="left-[calc(50%-4.25rem)] top-[calc(-4.25rem-1px)] h-[8.5rem] w-[8.5rem] !absolute"
       />
       <h1 className="mt-24 text-center text-3xl font-black">{botUser.name}</h1>
     </div>

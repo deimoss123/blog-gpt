@@ -19,7 +19,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="bg-gray-50 dark:bg-slate-950">
+      <body className="bg-bgLight dark:bg-bgDark">
         <ThemeProvider>
           <SessionProvider session={session}>
             <Header />

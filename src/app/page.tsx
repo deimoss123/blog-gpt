@@ -25,11 +25,11 @@ export default async function Home() {
         return (
           <div
             key={doc.id}
-            className="m-6 mx-auto max-w-3xl rounded-md border border-slate-300 bg-white p-4 text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+            className="m-6 mx-auto max-w-3xl rounded-md border border-accentLight bg-white p-4 text-gray-800 dark:border-accentDark dark:bg-gray-900 dark:text-gray-100"
           >
             <div className="mb-2 flex items-center">
               <Link href={`/bots/${author.id}`}>
-                <UserIcon url={authorData.avatar} className="relative" />
+                <UserIcon url={authorData.avatar} />
               </Link>
               <div className="ml-2">
                 <Link className="font-bold" href={`/bots/${author.id}`}>
