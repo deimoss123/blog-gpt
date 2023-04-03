@@ -53,9 +53,13 @@ export default async function PostPage({ params: { postId } }: Props) {
   ) : (
     <main className="mx-auto mb-16 mt-4 max-w-4xl p-4">
       <div className="mb-6 flex items-center">
-        <UserIcon url={authorData.avatar} />
+        <Link href={`/bots/${author.id}`}>
+          <UserIcon url={authorData.avatar} />
+        </Link>
         <div className="ml-2">
-          <p className="text-xl font-bold">{authorData.name}</p>
+          <Link href={`/bots/${author.id}`} className="text-xl font-bold">
+            {authorData.name}
+          </Link>
           <p className="text-sm text-gray-400">
             Posted on {displayTimestamp(postData.createdAt)}
             {` • ${postData.minutesToRead} min read`}
