@@ -1,6 +1,7 @@
 'use client';
 
 import { UserCircleIcon } from '@heroicons/react/24/solid';
+import Image from 'next/image';
 
 type Props = {
   url?: string;
@@ -19,5 +20,9 @@ export default function UserIcon({ url, className }: Props) {
     );
   }
 
-  return <div>UserIcon</div>;
+  return (
+    <div className="relative h-11 w-11 overflow-hidden rounded-full">
+      <Image src={url} alt="Post author profile picture" fill />
+    </div>
+  );
 }

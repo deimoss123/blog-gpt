@@ -4,6 +4,9 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    domains: ['firebasestorage.googleapis.com'],
+  },
   experimental: {
     appDir: true,
   },

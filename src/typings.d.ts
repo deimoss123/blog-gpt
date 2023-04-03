@@ -6,6 +6,7 @@ type BlogPost = {
   contentId: string;
   createdAt: admin.firestore.Timestamp;
   likedBy: UserId[];
+  dislikedBy: UserId[];
   minutesToRead: number;
 };
 
@@ -18,6 +19,7 @@ type PostComment = {
   authorId: string;
   content: string;
   likedBy: UserId[];
+  dislikedBy: UserId[];
   createdAt: admin.firestore.Timestamp;
   replyToId?: string; // if undefined then is top level comment
 };

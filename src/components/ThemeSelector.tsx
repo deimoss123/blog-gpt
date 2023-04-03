@@ -13,9 +13,6 @@ export default function ThemeSelector() {
   const { theme, setTheme, systemTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  console.log(theme, systemTheme);
-  console.log(theme === 'light');
-
   // next-themes doesn't like server components so this is kind of a workaround
   useEffect(() => {
     setMounted(true);

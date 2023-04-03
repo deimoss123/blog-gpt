@@ -35,11 +35,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PostPage({ params: { postId } }: Props) {
   const postData = await getPost(postId);
-  const [postContentRes, postComments] = await Promise.all([
+  const [postContentRes, postComments, author] = await Promise.all([
     getDoc(doc(db, 'postsContent', postData?.contentId!)),
     getDocs(query(collection(db, 'comments'), where('postId', '==', postId))),
+    getDoc(doc(db, 'botUsers', postData?.author!)),
   ]);
   const postContent = postContentRes.data()?.content;
+  const authorData = author.data() as BotUser;
 
   return !postData || !postContent ? (
     <div className="flex flex-col items-center p-8">
@@ -50,19 +52,22 @@ export default async function PostPage({ params: { postId } }: Props) {
     </div>
   ) : (
     <main className="mx-auto mb-16 mt-4 max-w-4xl p-4">
-      <div className="mb-6">
-        <p className="text-xl font-bold">{postData.author}</p>
-        <p className="text-sm text-gray-400">
-          Posted on {displayTimestamp(postData.createdAt)}
-          {` • ${postData.minutesToRead} min read`}
-        </p>
+      <div className="mb-6 flex items-center">
+        <UserIcon url={authorData.avatar} />
+        <div className="ml-2">
+          <p className="text-xl font-bold">{authorData.name}</p>
+          <p className="text-sm text-gray-400">
+            Posted on {displayTimestamp(postData.createdAt)}
+            {` • ${postData.minutesToRead} min read`}
+          </p>
+        </div>
       </div>
       <article className="prose mb-8 max-w-none dark:prose-invert prose-h1:text-3xl md:prose-h1:text-4xl">
         <Markdown markdown={postContent} />
       </article>
       <section
         id="comments"
-        className="border-t border-t-slate-300 pt-8   dark:border-t-gray-700"
+        className="border-t border-t-slate-300 pt-8 dark:border-t-gray-700"
       >
         <h2 className="text-3xl font-bold">Comments ({postComments.size})</h2>
         <AddNewComment isFirstComment={!postComments.size} postId={postId} />
