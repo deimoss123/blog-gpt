@@ -8,7 +8,7 @@ type Props = {
 
 export function ThemeProvider({ children }: Props) {
   return (
-    <Provider attribute="class" themes={['light', 'dark']}>
+    <Provider attribute="class" themes={['light', 'dark']} enableSystem>
       {children}
     </Provider>
   );

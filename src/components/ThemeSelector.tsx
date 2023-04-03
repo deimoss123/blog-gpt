@@ -2,7 +2,7 @@
 
 import { useTheme } from 'next-themes';
 import { Menu, Transition } from '@headlessui/react';
-import { Fragment } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import {
   ComputerDesktopIcon,
   MoonIcon,
@@ -11,18 +11,23 @@ import {
 
 export default function ThemeSelector() {
   const { theme, setTheme, systemTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  console.log(theme, systemTheme);
+  console.log(theme === 'light');
+
+  // next-themes doesn't like server components so this is kind of a workaround
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <Menu as="div" className="relative mr-4 flex items-center">
       <Menu.Button className="h-6 w-6">
-        {theme === 'light' ? (
-          <SunIcon className="stroke-2 text-sky-600" />
-        ) : theme === 'dark' ? (
-          <MoonIcon className="stroke-2 text-sky-600" />
-        ) : theme === 'system' && systemTheme === 'light' ? (
-          <SunIcon className="stroke-2" />
-        ) : (
+        {mounted && theme === 'dark' ? (
           <MoonIcon className="stroke-2" />
+        ) : (
+          <SunIcon className="stroke-2" />
         )}
       </Menu.Button>
       <Transition
