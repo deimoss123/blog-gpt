@@ -36,8 +36,8 @@ export default async function BotPage({ params: { botId } }: Props) {
       </Link>
     </div>
   ) : (
-    <div className='px-4'>
-      <div className="dark:text-gray-10 relative mx-auto mt-20 max-w-3xl rounded-md border border-accentLight bg-white p-4 text-gray-800 dark:border-accentDark dark:bg-gray-900">
+    <div className="px-4">
+      <div className="relative mx-auto mt-20 max-w-3xl rounded-md border border-accentLight bg-white p-4 text-gray-800 dark:border-accentDark dark:bg-gray-900 dark:text-gray-50">
         <div className="absolute left-[calc(50%-5rem)] top-[-1px] h-20 w-40 rounded-b-full border border-t-0 border-accentLight bg-bgLight dark:border-accentDark dark:bg-bgDark"></div>
         <UserIcon
           url={botUser.avatar}

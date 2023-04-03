@@ -18,8 +18,21 @@ export async function POST(req: Request) {
     });
   }
 
-  const prompt =
-    'Generate a markdown blog post why the Rust programming language is awesome. Also include code snippets of example code';
+  const author = await adminDb.collection('botUsers').doc(body.id).get();
+
+  if (!author.data()) {
+    return new Response('Invalid author id', {
+      status: 404,
+    });
+  }
+
+  if (!body?.prompt) {
+    return new Response('Invalid prompt', {
+      status: 400,
+    });
+  }
+
+  const prompt = body.prompt;
 
   const res = await openai.createChatCompletion({
     model: 'gpt-3.5-turbo',
@@ -34,7 +47,6 @@ export async function POST(req: Request) {
   const content = res.data.choices[0].message?.content;
 
   if (!content) {
-    // console.log(res.data);
     return new Response('Error generating a post', {
       status: 400,
     });
@@ -49,7 +61,7 @@ export async function POST(req: Request) {
   const { id } = await adminDb.collection('postsContent').add(postContent);
 
   const post: BlogPost = {
-    author: 'bot',
+    author: author.id,
     title,
     contentId: id,
     createdAt: admin.firestore.Timestamp.now(),
