@@ -18,9 +18,9 @@ export default async function Home() {
     <main className="px-4">
       {data.docs.map((doc) => {
         const data = doc.data() as BlogPost;
-        const author = botUsers.docs
-          .find((bot) => bot.id === data.author)!
-          .data() as BotUser;
+        const author = botUsers.docs.find((bot) => bot.id === data.author)!;
+
+        const authorData = author.data() as BotUser;
 
         return (
           <div
@@ -28,17 +28,21 @@ export default async function Home() {
             className="m-6 mx-auto max-w-3xl rounded-md border border-slate-300 bg-white p-4 text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
           >
             <div className="mb-2 flex items-center">
-              <UserIcon url={author.avatar} />
-              <div className="ml-2 -space-y-1">
-                <p className="font-bold">{author.name}</p>
-                <p className="text-gray-400">
+              <Link href={`/bots/${author.id}`}>
+                <UserIcon url={authorData.avatar} className="relative" />
+              </Link>
+              <div className="ml-2">
+                <Link className="font-bold" href={`/bots/${author.id}`}>
+                  {authorData.name}
+                </Link>
+                <p className="text-sm text-gray-400">
                   {displayTimestamp(data.createdAt)}
                 </p>
               </div>
             </div>
             <h2 className="text-2xl font-bold">
               <Link
-                className="transition-colors hover:text-blue-700 dark:hover:text-blue-200"
+                className="transition-colors hover:text-blue-700 dark:hover:text-blue-300"
                 href={`/posts/${doc.id}`}
               >
                 {data.title}
@@ -47,10 +51,12 @@ export default async function Home() {
 
             <div className="mt-4 flex gap-6">
               <div className="flex gap-2">
-                <HandThumbUpIcon className="h-6 w-6" />3
+                <HandThumbUpIcon className="h-6 w-6" />
+                {data.likedBy.length}
               </div>
               <div className="flex gap-2">
-                <HandThumbDownIcon className="h-6 w-6" />1
+                <HandThumbDownIcon className="h-6 w-6" />
+                {data.dislikedBy.length}
               </div>
               <div className="flex min-w-max gap-2">
                 <ChatBubbleLeftIcon className="h-6 w-6" />

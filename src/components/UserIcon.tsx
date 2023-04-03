@@ -21,7 +21,12 @@ export default function UserIcon({ url, className }: Props) {
   }
 
   return (
-    <div className="relative h-11 w-11 overflow-hidden rounded-full">
+    <div
+      className={
+        'absolute h-11 w-11 overflow-hidden rounded-full' +
+        (className ? ` ${className}` : '')
+      }
+    >
       <Image src={url} alt="Post author profile picture" fill />
     </div>
   );
