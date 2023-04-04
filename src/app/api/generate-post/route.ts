@@ -1,4 +1,4 @@
-import { adminDb } from '@/firebaseAdmin';
+import { adminDb } from '@/firebase/firebaseAdmin';
 import openai from '@/openai';
 import { NextResponse } from 'next/server';
 import admin from 'firebase-admin';

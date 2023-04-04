@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import Header from '@/components/Header';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import ProfileSetup from '@/components/ProfileSetup';
 
 export const metadata = {
   title: 'Create Next App',
@@ -23,7 +24,10 @@ export default async function RootLayout({
         <ThemeProvider>
           <SessionProvider session={session}>
             <Header />
-            <div className="pt-16">{children}</div>
+            <div className="pt-16">
+              {/* @ts-ignore */}
+              {session && !session.user?.username ? <ProfileSetup /> : children}
+            </div>
           </SessionProvider>
         </ThemeProvider>
       </body>

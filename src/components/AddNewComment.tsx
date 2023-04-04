@@ -4,7 +4,7 @@ import { useState } from 'react';
 import UserIcon from './UserIcon';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { useSession } from 'next-auth/react';
-import { db } from '@/firebase';
+import { db } from '@/firebase/firebase';
 import { useRouter } from 'next/navigation';
 import { ArrowPathIcon } from '@heroicons/react/24/solid';
 

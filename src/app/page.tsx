@@ -1,5 +1,5 @@
 import PostCard from '@/components/PostCard';
-import { db } from '@/firebase';
+import { db } from '@/firebase/firebase';
 import { collection, getDocs, query } from 'firebase/firestore';
 
 export default async function Home() {

@@ -1,6 +1,6 @@
 import PostCard from '@/components/PostCard';
 import UserIcon from '@/components/UserIcon';
-import { db } from '@/firebase';
+import { db } from '@/firebase/firebase';
 import {
   collection,
   doc,

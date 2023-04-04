@@ -31,5 +31,7 @@ type BotUser = {
 };
 
 type HumanUser = {
+  email: string;
+  username: string;
   admin?: boolean;
 };

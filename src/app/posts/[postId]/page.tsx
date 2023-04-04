@@ -2,7 +2,7 @@ import AddNewComment from '@/components/AddNewComment';
 import CommentTree from '@/components/CommentTree';
 import Markdown from '@/components/Markdown';
 import UserIcon from '@/components/UserIcon';
-import { db } from '@/firebase';
+import { db } from '@/firebase/firebase';
 import displayTimestamp from '@/utils/displayTimestamp';
 import {
   collection,

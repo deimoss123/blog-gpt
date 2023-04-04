@@ -9,5 +9,8 @@ type Props = {
 };
 
 export function SessionProvider({ children, session }: Props) {
+  // console.log('session:');
+  // console.log(session);
+
   return <Provider>{children}</Provider>;
 }
