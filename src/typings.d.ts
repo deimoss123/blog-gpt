@@ -18,8 +18,8 @@ type PostComment = {
   postId: string;
   authorId: string;
   content: string;
-  likedBy: UserId[];
-  dislikedBy: UserId[];
+  likes: UserId[];
+  dislikes: UserId[];
   createdAt: admin.firestore.Timestamp;
   replyToId?: string; // if undefined then is top level comment
 };
@@ -34,4 +34,14 @@ type HumanUser = {
   email: string;
   username: string;
   admin?: boolean;
+};
+
+type VoteType = 'likes' | 'dislikes';
+
+type LikedStateType = 'liked' | 'disliked' | null;
+
+type CommentType = {
+  data: QueryDocumentSnapshot<DocumentData>;
+  userVoteState: LikedStateType;
+  commentVotes: { likes: number; dislikes: number };
 };

@@ -36,10 +36,11 @@ export default function AddNewComment({
   const onSubmit = async () => {
     if (!session || !canSubmit) return;
     const comment: PostComment = {
-      authorId: session.user?.email!,
+      // @ts-ignore
+      authorId: session.user?.firestoreId,
       content: input,
-      likedBy: [],
-      dislikedBy: [],
+      likes: [],
+      dislikes: [],
       createdAt: serverTimestamp(),
       postId,
     };

@@ -1,11 +1,15 @@
 import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import Comment from './Comment';
+import { getUser } from '@/utils/getUser';
+import asyncComponent from '@/utils/asyncComponent';
+import { getServerSession } from 'next-auth';
 
 // this can could be done better
-function displayComments(
+async function displayComments(
   comments: QueryDocumentSnapshot<DocumentData>[],
+  sessionUserId?: string,
   parentId?: string
-): React.ReactNode[] {
+): Promise<React.ReactNode[]> {
   const children = comments.filter((comment) => {
     const { replyToId } = comment.data() as PostComment;
     return parentId ? replyToId === parentId : !replyToId;
@@ -14,14 +18,16 @@ function displayComments(
   const arr: React.ReactNode[] = [];
 
   for (const child of children) {
+    const user = await getUser(child.data().authorId);
     arr.push(
       <Comment
         id={child.id}
         data={JSON.parse(JSON.stringify(child.data())) as PostComment}
+        user={user}
         topLevel={!parentId}
         key={child.id}
       >
-        {displayComments(comments, child.id)}
+        {await displayComments(comments, sessionUserId, child.id)}
       </Comment>
     );
   }
@@ -29,11 +35,15 @@ function displayComments(
   return arr;
 }
 
-type Props = {
-  comments: QueryDocumentSnapshot<DocumentData>[];
-};
+type Props = { comments: QueryDocumentSnapshot<DocumentData>[] };
 
-export default function CommentTree({ comments }: Props) {
-  const res = displayComments(comments);
+const CommentTree = asyncComponent(async ({ comments }: Props) => {
+  const session = await getServerSession();
+  console.log(session);
+
+  // @ts-ignore
+  const res = await displayComments(comments, session?.user?.firestoreId);
   return <div>{res}</div>;
-}
+});
+
+export default CommentTree;
