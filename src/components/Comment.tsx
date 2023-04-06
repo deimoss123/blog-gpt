@@ -6,11 +6,12 @@ import {
   HandThumbUpIcon,
 } from '@heroicons/react/24/outline';
 import UserIcon from './UserIcon';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import AddNewComment from './AddNewComment';
 import { arrayRemove, arrayUnion, doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebase/firebase';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 type Props = {
   children?: React.ReactNode;
@@ -24,6 +25,7 @@ type Props = {
 export default function Comment({ children, id, data, user, topLevel }: Props) {
   const [likedState, setLikedState] = useState<LikedStateType>(null);
   const { data: session, status } = useSession();
+  const router = useRouter();
 
   // @ts-ignore
   const sessionUserId = session?.user?.firestoreId as string;
@@ -40,14 +42,17 @@ export default function Comment({ children, id, data, user, topLevel }: Props) {
         setLikedState(likedState);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
   const [replyOpened, setReplyOpened] = useState(false);
 
   console.log(likedState);
 
-  const [likes, setLikes] = useState(data.likes.length);
-  const [dislikes, setDislikes] = useState(data.dislikes.length);
+  // const [likes, setLikes] = useState(data.likes.length);
+  // const [dislikes, setDislikes] = useState(data.dislikes.length);
+  const likes = data.likes.length;
+  const dislikes = data.dislikes.length;
 
   const removeVote = async (type: VoteType) => {
     await updateDoc(doc(db, 'comments', id), {
@@ -61,7 +66,13 @@ export default function Comment({ children, id, data, user, topLevel }: Props) {
     });
   };
 
+  const [isPending, startTransition] = useTransition();
+  const [isFetching, setIsFetching] = useState(false);
+
+  const isMutating = isFetching || isPending;
+
   const vote = async (type: VoteType, action: 'add' | 'remove' | 'change') => {
+    setIsFetching(true);
     switch (action) {
       case 'add': {
         await addVote(type);
@@ -78,6 +89,13 @@ export default function Comment({ children, id, data, user, topLevel }: Props) {
         ]);
       }
     }
+    setIsFetching(false);
+
+    startTransition(() => {
+      // Refresh the current route and fetch new data from the server without
+      // losing client-side browser or React state.
+      router.refresh();
+    });
   };
 
   const onReplyClick = () => {
@@ -90,6 +108,7 @@ export default function Comment({ children, id, data, user, topLevel }: Props) {
 
   // this isn't great to be honest
   const onLike = () => {
+    if (isMutating) return;
     if (!session) {
       // TODO: show sign in modal
       return;
@@ -97,20 +116,14 @@ export default function Comment({ children, id, data, user, topLevel }: Props) {
     if (likedState === 'liked') {
       vote('likes', 'remove');
       setLikedState(null);
-      setLikes(likes - 1);
     } else {
-      if (likedState === 'disliked') {
-        vote('likes', 'change');
-        setDislikes(dislikes - 1);
-      } else {
-        vote('likes', 'add');
-      }
-      setLikes(likes + 1);
+      vote('likes', likedState === 'disliked' ? 'change' : 'add');
       setLikedState('liked');
     }
   };
 
   const onDislike = () => {
+    if (isMutating) return;
     if (!session) {
       // TODO: show sign in modal
       return;
@@ -118,15 +131,8 @@ export default function Comment({ children, id, data, user, topLevel }: Props) {
     if (likedState === 'disliked') {
       vote('dislikes', 'remove');
       setLikedState(null);
-      setDislikes(dislikes - 1);
     } else {
-      if (likedState === 'liked') {
-        vote('dislikes', 'change');
-        setLikes(likes - 1);
-      } else {
-        vote('dislikes', 'add');
-      }
-      setDislikes(dislikes + 1);
+      vote('dislikes', likedState === 'liked' ? 'change' : 'add');
       setLikedState('disliked');
     }
   };
@@ -149,7 +155,9 @@ export default function Comment({ children, id, data, user, topLevel }: Props) {
             >
               <HandThumbUpIcon
                 className={
-                  'h-6 w-6' + (likedState === 'liked' ? ' fill-black' : '')
+                  'h-6 w-6' +
+                  (likedState === 'liked' ? ' fill-black' : '') +
+                  (isMutating ? ' opacity-30' : '')
                 }
               />
               {likes}
@@ -160,7 +168,9 @@ export default function Comment({ children, id, data, user, topLevel }: Props) {
             >
               <HandThumbDownIcon
                 className={
-                  'h-6 w-6' + (likedState === 'disliked' ? ' fill-black' : '')
+                  'h-6 w-6' +
+                  (likedState === 'disliked' ? ' fill-black' : '') +
+                  (isMutating ? ' opacity-30' : '')
                 }
               />
               {dislikes}
