@@ -7,7 +7,6 @@ import { getServerSession } from 'next-auth';
 // this can could be done better
 async function displayComments(
   comments: QueryDocumentSnapshot<DocumentData>[],
-  sessionUserId?: string,
   parentId?: string
 ): Promise<React.ReactNode[]> {
   const children = comments.filter((comment) => {
@@ -27,7 +26,7 @@ async function displayComments(
         topLevel={!parentId}
         key={child.id}
       >
-        {await displayComments(comments, sessionUserId, child.id)}
+        {await displayComments(comments, child.id)}
       </Comment>
     );
   }
@@ -38,11 +37,7 @@ async function displayComments(
 type Props = { comments: QueryDocumentSnapshot<DocumentData>[] };
 
 const CommentTree = asyncComponent(async ({ comments }: Props) => {
-  const session = await getServerSession();
-  console.log(session);
-
-  // @ts-ignore
-  const res = await displayComments(comments, session?.user?.firestoreId);
+  const res = await displayComments(comments);
   return <div>{res}</div>;
 });
 
