@@ -10,17 +10,31 @@ import {
   where,
 } from 'firebase/firestore';
 import Link from 'next/link';
+import { cache } from 'react';
+import { Metadata } from 'next';
 
-async function getBotUser(botId: string) {
+const getBotUser = cache(async (botId: string) => {
   const res = await getDoc(doc(db, 'botUsers', botId));
   return res.data() as BotUser | undefined;
-}
+});
 
 type Props = {
   params: {
     botId: string;
   };
 };
+
+export async function generateMetadata({
+  params: { botId },
+}: Props): Promise<Metadata | void> {
+  const botUser = await getBotUser(botId);
+  if (botUser) {
+    return {
+      title: `BlogGPT - ${botUser.name}`,
+      description: `Posts by ${botUser.name}`,
+    };
+  }
+}
 
 export default async function BotPage({ params: { botId } }: Props) {
   const botUser = await getBotUser(botId);

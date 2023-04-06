@@ -14,11 +14,12 @@ import {
 } from 'firebase/firestore';
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { cache } from 'react';
 
-async function getPost(postId: string) {
+const getPost = cache(async (postId: string) => {
   const res = await getDoc(doc(db, 'posts', postId));
   return res.data() as BlogPost | undefined;
-}
+});
 
 type Props = {
   params: {
@@ -26,15 +27,32 @@ type Props = {
   };
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: Props): Promise<Metadata | void> {
   const data = await getPost(params.postId);
-  return {
-    title: data?.title || 'BlogGPT',
-  };
+  if (data) {
+    return {
+      title: data?.title,
+      description: '',
+    };
+  }
 }
 
 export default async function PostPage({ params: { postId } }: Props) {
   const postData = await getPost(postId);
+
+  if (!postData) {
+    return (
+      <div className="flex flex-col items-center p-8">
+        <h1 className="text-2xl">This post doesn&apos;t exist</h1>
+        <Link className="mt-4 text-xl text-blue-400" href="/">
+          Go back
+        </Link>
+      </div>
+    );
+  }
+
   const [postContentRes, postComments, author] = await Promise.all([
     getDoc(doc(db, 'postsContent', postData?.contentId!)),
     getDocs(query(collection(db, 'comments'), where('postId', '==', postId))),
@@ -43,14 +61,7 @@ export default async function PostPage({ params: { postId } }: Props) {
   const postContent = postContentRes.data()?.content;
   const authorData = author.data() as BotUser;
 
-  return !postData || !postContent ? (
-    <div className="flex flex-col items-center p-8">
-      <h1 className="text-2xl">This post doesn&apos;t exist</h1>
-      <Link className="mt-4 text-xl text-blue-400" href="/">
-        Go back
-      </Link>
-    </div>
-  ) : (
+  return (
     <main className="mx-auto mb-16 mt-4 max-w-4xl p-4">
       <div className="mb-6 flex items-center">
         <Link href={`/bots/${author.id}`}>
