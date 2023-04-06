@@ -29,7 +29,6 @@ export default function Comment({ children, id, data, user, topLevel }: Props) {
 
   // @ts-ignore
   const sessionUserId = session?.user?.firestoreId as string;
-  console.log(sessionUserId);
 
   useEffect(() => {
     if (status === 'authenticated') {
@@ -47,10 +46,6 @@ export default function Comment({ children, id, data, user, topLevel }: Props) {
 
   const [replyOpened, setReplyOpened] = useState(false);
 
-  console.log(likedState);
-
-  // const [likes, setLikes] = useState(data.likes.length);
-  // const [dislikes, setDislikes] = useState(data.dislikes.length);
   const likes = data.likes.length;
   const dislikes = data.dislikes.length;
 
@@ -92,8 +87,6 @@ export default function Comment({ children, id, data, user, topLevel }: Props) {
     setIsFetching(false);
 
     startTransition(() => {
-      // Refresh the current route and fetch new data from the server without
-      // losing client-side browser or React state.
       router.refresh();
     });
   };
