@@ -2,7 +2,6 @@ import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import Comment from './Comment';
 import { getUser } from '@/utils/getUser';
 import asyncComponent from '@/utils/asyncComponent';
-import { getServerSession } from 'next-auth';
 
 // this can could be done better
 async function displayComments(
