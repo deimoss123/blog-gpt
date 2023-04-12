@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Login from './Login';
 import { signOut } from 'next-auth/react';
 import ThemeSelector from './ThemeSelector';
 import { Session } from 'next-auth';
