@@ -1,18 +1,6 @@
 import NextAuth, { AuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
-import { FirestoreAdapter } from '@next-auth/firebase-adapter';
 import { adminDb } from '@/firebase/firebaseAdmin';
-import { db } from '@/firebase/firebase';
-import { redirect } from 'next/navigation';
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  limit,
-  query,
-  where,
-} from 'firebase/firestore';
 
 const authOptions: AuthOptions = {
   // Configure one or more authentication providers
@@ -54,6 +42,7 @@ const authOptions: AuthOptions = {
       // console.log(session);
       // console.log(token);
       // console.log(user);
+      
 
       const userData = await adminDb
         .collection('users')

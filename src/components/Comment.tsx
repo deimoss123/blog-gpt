@@ -12,6 +12,7 @@ import { arrayRemove, arrayUnion, doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebase/firebase';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import LoginModal from './LoginModal';
 
 type Props = {
   children?: React.ReactNode;
@@ -24,6 +25,7 @@ type Props = {
 
 export default function Comment({ children, id, data, user, topLevel }: Props) {
   const [likedState, setLikedState] = useState<LikedStateType>(null);
+  const [isModalOpen, setModalOpen] = useState(false);
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -93,7 +95,7 @@ export default function Comment({ children, id, data, user, topLevel }: Props) {
 
   const onReplyClick = () => {
     if (!session) {
-      // TODO: show sign in modal
+      setModalOpen(true);
       return;
     }
     setReplyOpened(true);
@@ -103,7 +105,7 @@ export default function Comment({ children, id, data, user, topLevel }: Props) {
   const onLike = () => {
     if (isMutating) return;
     if (!session) {
-      // TODO: show sign in modal
+      setModalOpen(true);
       return;
     }
     if (likedState === 'liked') {
@@ -118,7 +120,7 @@ export default function Comment({ children, id, data, user, topLevel }: Props) {
   const onDislike = () => {
     if (isMutating) return;
     if (!session) {
-      // TODO: show sign in modal
+      setModalOpen(true);
       return;
     }
     if (likedState === 'disliked') {
@@ -131,61 +133,64 @@ export default function Comment({ children, id, data, user, topLevel }: Props) {
   };
 
   return (
-    <div className={'block' + (topLevel ? '' : ' ml-6 md:ml-8')}>
-      <div className="my-4 flex">
-        <UserIcon className="mr-1 mt-2" />
-        <div className="flex flex-1 flex-col">
-          <div className="flex-1 rounded-md border border-accentLight p-4 dark:border-accentDark">
-            <div>
-              <p className="font-semibold">{user.username}</p>
+    <>
+      <div className={'block' + (topLevel ? '' : ' ml-6 md:ml-8')}>
+        <div className="my-4 flex">
+          <UserIcon className="mr-1 mt-2" />
+          <div className="flex flex-1 flex-col">
+            <div className="flex-1 rounded-md border border-accentLight p-4 dark:border-accentDark">
+              <div>
+                <p className="font-semibold">{user.username}</p>
+              </div>
+              <p className="mt-4">{data.content}</p>
             </div>
-            <p className="mt-4">{data.content}</p>
-          </div>
-          <div className="mt-4 flex gap-6">
-            <button
-              className="flex items-center gap-2 transition-colors"
-              onClick={onLike}
-            >
-              <HandThumbUpIcon
-                className={
-                  'h-6 w-6' +
-                  (likedState === 'liked' ? ' fill-black' : '') +
-                  (isMutating ? ' opacity-30' : '')
-                }
+            <div className="mt-4 flex gap-6">
+              <button
+                className="flex items-center gap-2 transition-colors"
+                onClick={onLike}
+              >
+                <HandThumbUpIcon
+                  className={
+                    'h-6 w-6' +
+                    (likedState === 'liked' ? ' fill-black' : '') +
+                    (isMutating ? ' opacity-30' : '')
+                  }
+                />
+                {likes}
+              </button>
+              <button
+                className="flex items-center gap-2 transition-colors"
+                onClick={onDislike}
+              >
+                <HandThumbDownIcon
+                  className={
+                    'h-6 w-6' +
+                    (likedState === 'disliked' ? ' fill-black' : '') +
+                    (isMutating ? ' opacity-30' : '')
+                  }
+                />
+                {dislikes}
+              </button>
+              <button
+                className="flex items-center gap-2 fill-transparent transition-colors duration-300 hover:fill-slate-950 dark:hover:fill-gray-50"
+                onClick={onReplyClick}
+              >
+                <ChatBubbleLeftIcon className="h-6 w-6 fill-inherit" />
+                Reply
+              </button>
+            </div>
+            {replyOpened && (
+              <AddNewComment
+                avatarUrl={null}
+                postId={data.postId}
+                replyOptions={{ id, onClose: () => setReplyOpened(false) }}
               />
-              {likes}
-            </button>
-            <button
-              className="flex items-center gap-2 transition-colors"
-              onClick={onDislike}
-            >
-              <HandThumbDownIcon
-                className={
-                  'h-6 w-6' +
-                  (likedState === 'disliked' ? ' fill-black' : '') +
-                  (isMutating ? ' opacity-30' : '')
-                }
-              />
-              {dislikes}
-            </button>
-            <button
-              className="flex items-center gap-2 fill-transparent transition-colors duration-300 hover:fill-slate-950 dark:hover:fill-gray-50"
-              onClick={onReplyClick}
-            >
-              <ChatBubbleLeftIcon className="h-6 w-6 fill-inherit" />
-              Reply
-            </button>
+            )}
           </div>
-          {replyOpened && (
-            <AddNewComment
-              avatarUrl={null}
-              postId={data.postId}
-              replyOptions={{ id, onClose: () => setReplyOpened(false) }}
-            />
-          )}
         </div>
+        {children}
       </div>
-      {children}
-    </div>
+      <LoginModal isOpen={isModalOpen} setIsOpen={setModalOpen} titleText="Login to continue"/>
+    </>
   );
 }

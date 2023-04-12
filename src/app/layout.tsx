@@ -17,13 +17,13 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession(authOptions);
-
+  
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="bg-bgLight dark:bg-bgDark">
         <ThemeProvider>
           <SessionProvider session={session}>
-            <Header />
+            <Header session={session} />
             <div className="pt-16">
               {/* @ts-ignore */}
               {session && !session.user?.username ? <ProfileSetup /> : children}
