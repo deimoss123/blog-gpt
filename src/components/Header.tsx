@@ -30,6 +30,7 @@ export default function Header({ session }: Props) {
               BlogGPT
             </span>
           </Link>
+
           <ThemeSelector />
           {!session ? (
             <button
@@ -45,7 +46,7 @@ export default function Header({ session }: Props) {
               <img
                 src={session.user?.image!}
                 alt="Profile picture"
-                className="h-10 w-10 cursor-pointer rounded-full hover:opacity-70"
+                className="h-9 w-9 cursor-pointer rounded-full hover:opacity-70"
                 onClick={() => signOut()}
               />
             </>
