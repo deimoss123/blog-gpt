@@ -18,7 +18,7 @@ export default function Header({ session }: Props) {
 
   return (
     <>
-      <header className="fixed left-0 right-0 top-0 z-10 flex items-center border-b border-b-accentLight bg-inherit px-6 py-3 dark:border-b-accentDark dark:text-white">
+      <header className="fixed left-0 right-0 top-0 z-50 flex items-center border-b border-b-accentLight bg-inherit px-6 py-3 dark:border-b-accentDark dark:text-white">
         <Link href="/" className="mr-auto text-xl font-bold">
           BlogGPT
         </Link>
