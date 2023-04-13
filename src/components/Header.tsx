@@ -6,6 +6,7 @@ import ThemeSelector from './ThemeSelector';
 import { Session } from 'next-auth';
 import { useState } from 'react';
 import LoginModal from './LoginModal';
+import Image from 'next/image';
 
 type Props = {
   session: Session | null;
@@ -18,25 +19,38 @@ export default function Header({ session }: Props) {
 
   return (
     <>
-      <header className="fixed left-0 right-0 top-0 z-50 flex items-center border-b border-b-accentLight bg-inherit px-6 py-3 dark:border-b-accentDark dark:text-white">
-        <Link href="/" className="mr-auto text-xl font-bold">
-          BlogGPT
-        </Link>
-        <ThemeSelector />
-        {!session ? (
-          <button onClick={() => setModalOpen(true)}>Login</button>
-        ) : (
-          <>
-            <p className="mr-4">{username}</p>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={session.user?.image!}
-              alt="Profile picture"
-              className="h-10 w-10 cursor-pointer rounded-full hover:opacity-70"
-              onClick={() => signOut()}
-            />
-          </>
-        )}
+      <header className="fixed left-0 right-0 top-0 z-50 border-b border-accentLight bg-inherit dark:border-accentDark">
+        <div className="mx-auto flex max-w-5xl items-center px-4 py-2">
+          <Link href="/" className="mr-auto flex items-center gap-2">
+            <Image src="/logo.png" alt="logo" width={32} height={32} />
+            <span
+              className="text-xl font-bold dark:text-white sm:text-2xl"
+              // style={{ WebkitTextStroke: '1px white' }}
+            >
+              BlogGPT
+            </span>
+          </Link>
+          <ThemeSelector />
+          {!session ? (
+            <button
+              className="rounded-md border border-accentLight bg-white px-4 py-2 dark:border-accentDark dark:bg-gray-900"
+              onClick={() => setModalOpen(true)}
+            >
+              Login
+            </button>
+          ) : (
+            <>
+              <p className="mr-4 hidden sm:block">{username}</p>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={session.user?.image!}
+                alt="Profile picture"
+                className="h-10 w-10 cursor-pointer rounded-full hover:opacity-70"
+                onClick={() => signOut()}
+              />
+            </>
+          )}
+        </div>
       </header>
       <LoginModal
         isOpen={isModalOpen}
