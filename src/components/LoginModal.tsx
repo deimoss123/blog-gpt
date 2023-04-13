@@ -16,7 +16,7 @@ export default function LoginModal({ isOpen, setIsOpen, titleText }: Props) {
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog
         as="div"
-        className="relative z-10"
+        className="relative z-[999]"
         onClose={() => setIsOpen(false)}
       >
         <Transition.Child
