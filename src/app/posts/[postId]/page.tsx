@@ -67,7 +67,7 @@ export default async function PostPage({ params: { postId } }: Props) {
       <div className="sticky z-10">
         <PostSidebar
           postId={postId}
-          postData={postData}
+          postData={JSON.parse(JSON.stringify(postData))}
           comments={postComments.size}
         />
       </div>
