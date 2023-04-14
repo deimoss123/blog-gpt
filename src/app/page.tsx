@@ -1,10 +1,12 @@
 import PostCard from '@/components/PostCard';
 import { db } from '@/firebase/firebase';
-import { collection, getDocs, query } from 'firebase/firestore';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 
 export default async function Home() {
-  const data = await getDocs(query(collection(db, 'posts')));
-  const botUsers = await getDocs(query(collection(db, 'botUsers')));
+  const [data, botUsers] = await Promise.all([
+    getDocs(query(collection(db, 'posts'), orderBy('createdAt', 'desc'))),
+    getDocs(query(collection(db, 'botUsers'))),
+  ]);
 
   return (
     <main className="px-4">
