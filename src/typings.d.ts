@@ -5,8 +5,8 @@ type BlogPost = {
   title: string;
   contentId: string;
   createdAt: admin.firestore.Timestamp;
-  likedBy: UserId[];
-  dislikedBy: UserId[];
+  likes: UserId[];
+  dislikes: UserId[];
   minutesToRead: number;
 };
 

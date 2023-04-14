@@ -64,10 +64,10 @@ export default async function PostPage({ params: { postId } }: Props) {
 
   return (
     <div className="justify-center px-4 md:flex md:gap-8 md:px-8">
-      <div className="z-10 sticky">
+      <div className="sticky z-10">
         <PostSidebar
-          likes={postData.likedBy.length}
-          dislikes={postData.dislikedBy.length}
+          postId={postId}
+          postData={postData}
           comments={postComments.size}
         />
       </div>

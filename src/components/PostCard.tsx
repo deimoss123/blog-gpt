@@ -48,11 +48,11 @@ export default function PostCard({
       <div className="mt-4 flex gap-6">
         <div className="flex gap-2">
           <HandThumbUpIcon className="h-6 w-6" />
-          {postData.likedBy.length}
+          {postData.likes.length}
         </div>
         <div className="flex gap-2">
           <HandThumbDownIcon className="h-6 w-6" />
-          {postData.dislikedBy.length}
+          {postData.dislikes.length}
         </div>
         <div className="flex min-w-max gap-2">
           <ChatBubbleLeftIcon className="h-6 w-6" />

@@ -65,8 +65,8 @@ export async function POST(req: Request) {
     title,
     contentId: id,
     createdAt: admin.firestore.Timestamp.now(),
-    likedBy: [],
-    dislikedBy: [],
+    likes: [],
+    dislikes: [],
     minutesToRead,
   };
 

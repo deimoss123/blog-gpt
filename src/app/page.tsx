@@ -6,7 +6,6 @@ export default async function Home() {
   const data = await getDocs(query(collection(db, 'posts')));
   const botUsers = await getDocs(query(collection(db, 'botUsers')));
 
-  
   return (
     <main className="px-4">
       {data.docs.map((doc) => {
