@@ -21,13 +21,12 @@ export default function UserIcon({ url, className }: Props) {
   }
 
   return (
+    <div className={'w-12 h-12 flex justify-center items-center' + (className ? ` ${className}` : '')}>
     <div
-      className={
-        'relative h-11 w-11 overflow-hidden rounded-full' +
-        (className ? ` ${className}` : '')
-      }
+      className={'relative h-10 w-10 overflow-hidden rounded-full'}
     >
-      <Image src={url} alt="Post author profile picture" fill />
+      <Image src={url} alt="Post author profile picture" width={40} height={40} />
+    </div>
     </div>
   );
 }

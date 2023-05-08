@@ -116,7 +116,7 @@ export default function Comment({ children, id, author, currentUser, data, topLe
     <>
       <div className={'block' + (topLevel ? '' : ' ml-6 md:ml-8')}>
         <div className="my-4 flex">
-          <UserIcon className="mr-1 mt-2" />
+          <UserIcon url={author.image} className='mr-2'/>
           <div className="flex flex-1 flex-col">
             <div className="flex-1 rounded-md border border-accentLight p-4 dark:border-accentDark">
               <div>
@@ -161,7 +161,6 @@ export default function Comment({ children, id, author, currentUser, data, topLe
             </div>
             {replyOpened && (
               <AddNewComment
-                avatarUrl={null}
                 currentUser={currentUser}
                 postId={data.postId}
                 replyOptions={{ id, onClose: () => setReplyOpened(false) }}

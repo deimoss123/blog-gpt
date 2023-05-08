@@ -42,7 +42,7 @@ export default function Header({ currentUser }: Props) {
               <p className="mr-4 hidden sm:block">{currentUser.username}</p>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="https://firebasestorage.googleapis.com/v0/b/blog-gpt-af3da.appspot.com/o/tdQckCjYzazzxI1Gcoaf.png?alt=media&token=ec8917f7-58a1-4584-9092-915b576d1b5a"
+                src={currentUser.image!}
                 alt="Profile picture"
                 className="h-9 w-9 cursor-pointer rounded-full hover:opacity-70"
                 onClick={() => signOut()}

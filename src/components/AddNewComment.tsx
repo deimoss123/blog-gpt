@@ -16,7 +16,6 @@ type Props = {
     onClose: () => void;
   };
   isFirstComment?: boolean;
-  avatarUrl?: string | null; // null = hide avatar
 };
 
 export default function AddNewComment({
@@ -24,7 +23,6 @@ export default function AddNewComment({
   postId,
   replyOptions,
   isFirstComment,
-  avatarUrl,
 }: Props) {
   const textArea = useRef<HTMLTextAreaElement>(null);
   const [input, setInput] = useState('');
@@ -54,7 +52,7 @@ export default function AddNewComment({
   return (
     <>
       <div className="mt-4 flex">
-        {avatarUrl !== null && <UserIcon className="mr-2" url={avatarUrl} />}
+        <UserIcon className="mr-2" url={currentUser?.image} />
         <div className="flex-1">
           <textarea
             className="max-h-60 min-h-[4rem] w-full rounded-lg border border-accentLight bg-transparent p-2 dark:border-accentDark"
