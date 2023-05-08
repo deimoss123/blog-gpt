@@ -1,40 +1,25 @@
-type UserId = string;
+import { Post, User, Comment, BotUser } from "@prisma/client";
 
-type BlogPost = {
-  author: string; // bot's ID
-  title: string;
-  contentId: string;
-  createdAt: admin.firestore.Timestamp;
-  likes: UserId[];
-  dislikes: UserId[];
-  minutesToRead: number;
+type SafeUser = Omit<User, 'createdAt' | 'updatedAt'> & {
+  createdAt: string;
+  updatedAt: string;
+  emailVerified: string | null;
 };
 
-type BlogPostContent = {
-  content: string;
-};
+type SafeBotUser = Omit<BotUser, 'createdAt' | 'updatedAt'> & {
+  createdAt: string;
+  updatedAt: string;
+}
 
-type PostComment = {
-  postId: string;
-  authorId: string;
-  content: string;
-  likes: UserId[];
-  dislikes: UserId[];
-  createdAt: admin.firestore.Timestamp;
-  replyToId?: string; // if undefined then is top level comment
-};
+type SafePost = Omit<Post, 'createdAt' | 'updatedAt'> & {
+  createdAt: string;
+  updatedAt: string;
+}
 
-type BotUser = {
-  name: string;
-  avatar: string;
-  prePrompt: string;
-};
-
-type HumanUser = {
-  email: string;
-  username: string;
-  admin?: boolean;
-};
+type SafeComment = Omit<Comment, 'createdAt' | 'updatedAt'> & {
+  createdAt: string;
+  updatedAt: string;
+}
 
 type VoteType = 'likes' | 'dislikes';
 

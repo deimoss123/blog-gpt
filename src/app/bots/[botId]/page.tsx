@@ -1,21 +1,41 @@
 import PostCard from '@/components/PostCard';
 import UserIcon from '@/components/UserIcon';
-import { db } from '@/firebase/firebase';
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-} from 'firebase/firestore';
 import Link from 'next/link';
 import { cache } from 'react';
 import { Metadata } from 'next';
+import db from '@/utils/db';
 
 const getBotUser = cache(async (botId: string) => {
-  const res = await getDoc(doc(db, 'botUsers', botId));
-  return res.data() as BotUser | undefined;
+  const res = await db.botUser.findUnique({
+    where: {
+      id: botId
+    },
+    include: {
+      posts: {
+        select: {
+          id: true,
+          authorId: true,
+          title: true,
+          likes: true,
+          dislikes: true,
+          minutesToRead: true,
+          createdAt: true,
+          updatedAt: true,
+          _count: {
+            select: { comments: true }
+          }
+        }
+      }
+    }
+  })
+
+  if (!res) return null;
+  
+  return {
+    ...res,
+    createdAt: res.createdAt.toISOString(),
+    updatedAt: res.updatedAt.toISOString(),
+  }
 });
 
 type Props = {
@@ -38,9 +58,6 @@ export async function generateMetadata({
 
 export default async function BotPage({ params: { botId } }: Props) {
   const botUser = await getBotUser(botId);
-  const posts = await getDocs(
-    query(collection(db, 'posts'), where('author', '==', botId))
-  );
 
   return !botUser ? (
     <div className="flex flex-col items-center p-8">
@@ -61,15 +78,17 @@ export default async function BotPage({ params: { botId } }: Props) {
           {botUser.name}
         </h1>
       </div>
-      {posts.docs.map((post) => {
-        const data = post.data() as BlogPost;
+      {botUser.posts.map((post) => {
         return (
           <PostCard
             key={post.id}
-            postData={data}
-            postId={post.id}
-            authorData={botUser}
-            authorId={botId}
+            // @ts-ignore
+            data={{
+              ...post,
+              createdAt: post.createdAt.toISOString(), 
+              updatedAt: post.updatedAt.toISOString(),
+            }}
+            author={botUser}
           />
         );
       })}

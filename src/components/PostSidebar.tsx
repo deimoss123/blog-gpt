@@ -1,60 +1,39 @@
 'use client';
 
-import { db } from '@/firebase/firebase';
 import {
   BookmarkIcon,
   ChatBubbleLeftIcon,
   HandThumbDownIcon,
   HandThumbUpIcon,
 } from '@heroicons/react/24/outline';
-import { updateDoc, doc, arrayRemove, arrayUnion } from 'firebase/firestore';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import LoginModal from './LoginModal';
+import { Post } from '@prisma/client';
+import { LikedStateType, SafeUser, VoteType } from '@/typings';
+import axios from 'axios';
 
 type Props = {
-  postId: string;
-  postData: BlogPost;
+  postData: Post,
+  currentUser: SafeUser | null;
   comments: number;
 };
 
-export default function PostSidebar({ postId, postData, comments }: Props) {
-  const [likedState, setLikedState] = useState<LikedStateType>(null);
+export default function PostSidebar({ postData, currentUser, comments }: Props) {
+  const defaultLikedState = currentUser ? postData.likes.includes(currentUser.id) ? 'liked' : postData.dislikes.includes(currentUser.id) ? 'disliked' : null : null;
+  const [likedState, setLikedState] = useState<LikedStateType>(defaultLikedState);
   const [isModalOpen, setModalOpen] = useState(false);
-  const { data: session, status } = useSession();
   const router = useRouter();
-
-  // @ts-ignore
-  const sessionUserId = session?.user?.firestoreId as string;
-
-  useEffect(() => {
-    if (status === 'authenticated') {
-      const likedState = postData.likes.includes(sessionUserId)
-        ? 'liked'
-        : postData.dislikes.includes(sessionUserId)
-        ? 'disliked'
-        : null;
-      if (likedState) {
-        setLikedState(likedState);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
 
   const likes = postData.likes.length;
   const dislikes = postData.dislikes.length;
-
+  
   const removeVote = async (type: VoteType) => {
-    await updateDoc(doc(db, 'posts', postId), {
-      [type]: arrayRemove(sessionUserId),
-    });
+    await axios.patch('/api/vote', { id: postData.id, type: 'post', voteType: type, remove: true })
   };
 
   const addVote = async (type: VoteType) => {
-    await updateDoc(doc(db, 'posts', postId), {
-      [type]: arrayUnion(sessionUserId),
-    });
+    await axios.patch('/api/vote', { id: postData.id, type: 'post', voteType: type })
   };
 
   const [isPending, startTransition] = useTransition();
@@ -67,12 +46,10 @@ export default function PostSidebar({ postId, postData, comments }: Props) {
     switch (action) {
       case 'add': {
         await addVote(type);
-        break;
-      }
+      } break;
       case 'remove': {
         await removeVote(type);
-        break;
-      }
+      } break;
       case 'change': {
         await Promise.all([
           addVote(type),
@@ -90,7 +67,7 @@ export default function PostSidebar({ postId, postData, comments }: Props) {
   // this isn't great to be honest
   const onLike = () => {
     if (isMutating) return;
-    if (!session) {
+    if (!currentUser) {
       setModalOpen(true);
       return;
     }
@@ -105,7 +82,7 @@ export default function PostSidebar({ postId, postData, comments }: Props) {
 
   const onDislike = () => {
     if (isMutating) return;
-    if (!session) {
+    if (!currentUser) {
       setModalOpen(true);
       return;
     }

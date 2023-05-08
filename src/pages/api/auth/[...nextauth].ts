@@ -1,9 +1,11 @@
+import db from '@/utils/db';
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import NextAuth, { AuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
-import { adminDb } from '@/firebase/firebaseAdmin';
 
-const authOptions: AuthOptions = {
+export const authOptions: AuthOptions = {
   // Configure one or more authentication providers
+  adapter: PrismaAdapter(db),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_ID!,
@@ -11,59 +13,14 @@ const authOptions: AuthOptions = {
     }),
     // ...add more providers here
   ],
-  // adapter: FirestoreAdapter(adminDb),
-  callbacks: {
-    async signIn({ account, user, credentials, email, profile }) {
-      console.log(account);
-      console.log(user);
-      console.log(credentials);
-      console.log(email);
-      console.log(profile);
-
-      const res = await adminDb
-        .collection('users')
-        .where('email', '==', user.email)
-        .limit(1)
-        .get();
-
-      if (!res.docs.length) {
-        const newUser: HumanUser = {
-          email: user.email!,
-          username: '',
-        };
-
-        await adminDb.collection('users').add(newUser);
-      }
-
-      return true;
-    },
-    async session({ session, token, user }) {
-      // console.log('-- SESSION --');
-      // console.log(session);
-      // console.log(token);
-      // console.log(user);
-      
-
-      const userData = await adminDb
-        .collection('users')
-        .where('email', '==', session.user!.email)
-        .limit(1)
-        .get();
-
-      if (userData.docs.length) {
-        session.user = {
-          ...session.user,
-          ...userData.docs[0].data(),
-          // @ts-ignore
-          firestoreId: userData.docs[0].id,
-        };
-      }
-
-      return session;
-    },
+  pages: {
+    signIn: '/',
   },
+  debug: process.env.NODE_ENV === 'development',
+  session: {
+    strategy: 'jwt',
+  },
+  secret: process.env.NEXTAUTH_URL,
 };
-
-export { authOptions };
 
 export default NextAuth(authOptions);

@@ -1,31 +1,34 @@
-import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import Comment from './Comment';
-import { getUser } from '@/utils/getUser';
 import asyncComponent from '@/utils/asyncComponent';
+import { Comment as CommentType } from '@prisma/client';
+import db from '@/utils/db';
+import { SafeUser } from '@/typings';
 
 // this can could be done better
 async function displayComments(
-  comments: QueryDocumentSnapshot<DocumentData>[],
+  comments: CommentType[],
+  currentUser: SafeUser | null,
   parentId?: string
 ): Promise<React.ReactNode[]> {
   const children = comments.filter((comment) => {
-    const { replyToId } = comment.data() as PostComment;
+    const { replyToId } = comment
     return parentId ? replyToId === parentId : !replyToId;
   });
 
   const arr: React.ReactNode[] = [];
 
   for (const child of children) {
-    const user = await getUser(child.data().authorId);
+    const user = await db.user.findFirst({ where: { id: child.authorId }})
     arr.push(
       <Comment
         id={child.id}
-        data={JSON.parse(JSON.stringify(child.data())) as PostComment}
-        user={user}
+        data={child}
+        author={user!}
+        currentUser={currentUser}
         topLevel={!parentId}
         key={child.id}
       >
-        {await displayComments(comments, child.id)}
+        {await displayComments(comments, currentUser, child.id)}
       </Comment>
     );
   }
@@ -33,10 +36,10 @@ async function displayComments(
   return arr;
 }
 
-type Props = { comments: QueryDocumentSnapshot<DocumentData>[] };
+type Props = { comments: CommentType[]; currentUser: SafeUser | null };
 
-const CommentTree = asyncComponent(async ({ comments }: Props) => {
-  const res = await displayComments(comments);
+const CommentTree = asyncComponent(async ({ comments, currentUser }: Props) => {
+  const res = await displayComments(comments, currentUser);
   return <div>{res}</div>;
 });
 

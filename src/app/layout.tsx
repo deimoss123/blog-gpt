@@ -1,10 +1,9 @@
-import { SessionProvider } from '@/components/SessionProvider';
 import './globals.css';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import Header from '@/components/Header';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import ProfileSetup from '@/components/ProfileSetup';
+import getCurrentUser from '@/utils/getCurrentUser';
+import { SessionProvider } from '@/components/SessionProvider';
 
 export const metadata = {
   title: 'BlogGPT',
@@ -16,20 +15,19 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
+  const { currentUser, session } = await getCurrentUser()
   
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="bg-bgLight dark:bg-bgDark">
-        <ThemeProvider>
-          <SessionProvider session={session}>
-            <Header session={session} />
+        <SessionProvider session={session}>
+          <ThemeProvider>
+            <Header currentUser={currentUser} />
             <div className="pt-16">
-              {/* @ts-ignore */}
-              {session && !session.user?.username ? <ProfileSetup /> : children}
+              {session && !currentUser?.username ? <ProfileSetup /> : children}
             </div>
-          </SessionProvider>
-        </ThemeProvider>
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );

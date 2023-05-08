@@ -4,7 +4,7 @@ import { UserCircleIcon } from '@heroicons/react/24/solid';
 import Image from 'next/image';
 
 type Props = {
-  url?: string;
+  url?: string | null;
   className?: string;
 };
 

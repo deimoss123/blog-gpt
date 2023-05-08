@@ -6,45 +6,29 @@ import {
   HandThumbUpIcon,
 } from '@heroicons/react/24/outline';
 import UserIcon from './UserIcon';
-import { useEffect, useState, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import AddNewComment from './AddNewComment';
-import { arrayRemove, arrayUnion, doc, updateDoc } from 'firebase/firestore';
-import { db } from '@/firebase/firebase';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import LoginModal from './LoginModal';
+import { LikedStateType, SafeUser, VoteType } from '@/typings';
+import axios from 'axios';
+import { Comment as CommentType, User } from '@prisma/client';
 
 type Props = {
   children?: React.ReactNode;
   id: string;
-  data: PostComment;
-  user: HumanUser;
-  sessionUserId?: string;
+  author: User;
+  currentUser: SafeUser | null;
+  data: CommentType;
   topLevel?: boolean;
 };
 
-export default function Comment({ children, id, data, user, topLevel }: Props) {
-  const [likedState, setLikedState] = useState<LikedStateType>(null);
+export default function Comment({ children, id, author, currentUser, data, topLevel }: Props) {
+  const defaultLikedState = currentUser ? data.likes.includes(currentUser.id) ? 'liked' : data.dislikes.includes(currentUser.id) ? 'disliked' : null : null;
+
+  const [likedState, setLikedState] = useState<LikedStateType>(defaultLikedState);
   const [isModalOpen, setModalOpen] = useState(false);
-  const { data: session, status } = useSession();
   const router = useRouter();
-
-  // @ts-ignore
-  const sessionUserId = session?.user?.firestoreId as string;
-
-  useEffect(() => {
-    if (status === 'authenticated') {
-      const likedState = data.likes.includes(sessionUserId)
-        ? 'liked'
-        : data.dislikes.includes(sessionUserId)
-        ? 'disliked'
-        : null;
-      if (likedState) {
-        setLikedState(likedState);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
 
   const [replyOpened, setReplyOpened] = useState(false);
 
@@ -52,15 +36,11 @@ export default function Comment({ children, id, data, user, topLevel }: Props) {
   const dislikes = data.dislikes.length;
 
   const removeVote = async (type: VoteType) => {
-    await updateDoc(doc(db, 'comments', id), {
-      [type]: arrayRemove(sessionUserId),
-    });
+    await axios.patch('/api/vote', { id: data.id, type: 'comment', voteType: type, remove: true })
   };
 
   const addVote = async (type: VoteType) => {
-    await updateDoc(doc(db, 'comments', id), {
-      [type]: arrayUnion(sessionUserId),
-    });
+    await axios.patch('/api/vote', { id: data.id, type: 'comment', voteType: type })
   };
 
   const [isPending, startTransition] = useTransition();
@@ -94,7 +74,7 @@ export default function Comment({ children, id, data, user, topLevel }: Props) {
   };
 
   const onReplyClick = () => {
-    if (!session) {
+    if (!currentUser) {
       setModalOpen(true);
       return;
     }
@@ -104,7 +84,7 @@ export default function Comment({ children, id, data, user, topLevel }: Props) {
   // this isn't great to be honest
   const onLike = () => {
     if (isMutating) return;
-    if (!session) {
+    if (!currentUser) {
       setModalOpen(true);
       return;
     }
@@ -119,7 +99,7 @@ export default function Comment({ children, id, data, user, topLevel }: Props) {
 
   const onDislike = () => {
     if (isMutating) return;
-    if (!session) {
+    if (!currentUser) {
       setModalOpen(true);
       return;
     }
@@ -140,7 +120,7 @@ export default function Comment({ children, id, data, user, topLevel }: Props) {
           <div className="flex flex-1 flex-col">
             <div className="flex-1 rounded-md border border-accentLight p-4 dark:border-accentDark">
               <div>
-                <p className="font-semibold">{user.username}</p>
+                <p className="font-semibold">{author.username}</p>
               </div>
               <p className="mt-4">{data.content}</p>
             </div>
@@ -182,6 +162,7 @@ export default function Comment({ children, id, data, user, topLevel }: Props) {
             {replyOpened && (
               <AddNewComment
                 avatarUrl={null}
+                currentUser={currentUser}
                 postId={data.postId}
                 replyOptions={{ id, onClose: () => setReplyOpened(false) }}
               />

@@ -1,28 +1,48 @@
 import PostCard from '@/components/PostCard';
-import { db } from '@/firebase/firebase';
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { SafeBotUser, SafePost } from '@/typings';
+import db from '@/utils/db';
+
+async function getAllPosts(): Promise<SafePost[]> {
+  const posts = await db.post.findMany({
+    select: {
+      id: true,
+      authorId: true,
+      title: true,
+      likes: true,
+      dislikes: true,
+      minutesToRead: true,
+      createdAt: true,
+      updatedAt: true,
+      _count: {
+        select: { comments: true }
+      }
+    },
+  })
+  
+  // @ts-ignore
+  return posts.map(post => ({ ...post, createdAt: post.createdAt.toISOString(), updatedAt: post.updatedAt.toISOString()}))
+}
+
+async function getBotUsers(): Promise<SafeBotUser[]> {
+  const botUsers = await db.botUser.findMany()
+  return botUsers.map(bot => ({ ...bot, createdAt: bot.createdAt.toISOString(), updatedAt: bot.updatedAt.toISOString() }))
+}
 
 export default async function Home() {
-  const [data, botUsers] = await Promise.all([
-    getDocs(query(collection(db, 'posts'), orderBy('createdAt', 'desc'))),
-    getDocs(query(collection(db, 'botUsers'))),
-  ]);
+  const [posts, botUsers] = (await Promise.all([
+    getAllPosts(),
+    getBotUsers(),
+  ])) as [SafePost[], SafeBotUser[]];
 
   return (
     <main className="px-4">
-      {data.docs.map((doc) => {
-        const data = doc.data() as BlogPost;
-        const author = botUsers.docs.find((bot) => bot.id === data.author)!;
-
-        const authorData = author.data() as BotUser;
-
+      {posts.map((post) => {
+        const author = botUsers.find(bot => bot.id === post.authorId)!
         return (
           <PostCard
-            key={doc.id}
-            postData={data}
-            postId={doc.id}
-            authorData={authorData}
-            authorId={author.id}
+            key={post.id}
+            data={post}
+            author={author}
           />
         );
       })}

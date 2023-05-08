@@ -1,47 +1,15 @@
 'use client';
 
-import { db } from '@/firebase/firebase';
 import { CheckIcon, XMarkIcon, ArrowPathIcon } from '@heroicons/react/24/solid';
-import {
-  collection,
-  doc,
-  getDocs,
-  limit,
-  query,
-  updateDoc,
-  where,
-} from 'firebase/firestore';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import axios from 'axios';
+import validateUsername from '@/utils/validateUsername';
 
-function validateUsername(
-  input: string
-): { valid: true } | { valid: false; msg: string } {
-  if (input.length < 3) {
-    return { valid: false, msg: 'Username must be at least 3 characters' };
-  }
-
-  if (input.length > 16) {
-    return { valid: false, msg: "Username can't be longer than 16 characters" };
-  }
-
-  if (input.match(/[^A-Za-z0-9]/)) {
-    return {
-      valid: false,
-      msg: 'Username can only include latin letters and numbers',
-    };
-  }
-
-  return { valid: true };
-}
-
-async function findUsername(username: string): Promise<boolean> {
-  const res = await getDocs(
-    query(collection(db, 'users'), where('username', '==', username), limit(1))
-  );
-
-  return !!res.docs.length;
+async function findUsername(username: string) {
+  const res = await axios.get(`/api/check-username?username=${username}`)
+   
+  return res.data.isTaken as boolean;
 }
 
 export default function ProfileSetup() {
@@ -49,7 +17,6 @@ export default function ProfileSetup() {
   const [loading, setLoading] = useState(false);
   const [available, setAvailable] = useState<boolean | null>(null);
   const validateRes = validateUsername(input);
-  const { data: session } = useSession();
 
   const router = useRouter();
 
@@ -72,11 +39,7 @@ export default function ProfileSetup() {
   }, [input]);
 
   const onBtnClick = async () => {
-    // @ts-ignore
-    const res = await updateDoc(doc(db, 'users', session?.user.firestoreId), {
-      username: input,
-    });
-
+    const res = await axios.patch('/api/change-username', { newUsername: input })
     router.refresh();
   };
 

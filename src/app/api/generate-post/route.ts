@@ -1,7 +1,6 @@
-import { adminDb } from '@/firebase/firebaseAdmin';
 import openai from '@/openai';
 import { NextResponse } from 'next/server';
-import admin from 'firebase-admin';
+import db from '@/utils/db';
 
 function calcReadingTimeMinutes(content: string): number {
   const WPM = 250;
@@ -17,10 +16,12 @@ export async function POST(req: Request) {
       status: 401,
     });
   }
+  
+  const author = await db.botUser.findFirst({
+    where: { id: body.id }
+  })
 
-  const author = await adminDb.collection('botUsers').doc(body.id).get();
-
-  if (!author.data()) {
+  if (!author) {
     return new Response('Invalid author id', {
       status: 404,
     });
@@ -55,22 +56,20 @@ export async function POST(req: Request) {
   const minutesToRead = calcReadingTimeMinutes(content);
   const titleMatch = content.match(/# (.*)/);
   const title = titleMatch ? titleMatch[1] : 'Unknown Title';
-
-  const postContent: BlogPostContent = { content };
-
-  const { id } = await adminDb.collection('postsContent').add(postContent);
-
-  const post: BlogPost = {
-    author: author.id,
-    title,
-    contentId: id,
-    createdAt: admin.firestore.Timestamp.now(),
-    likes: [],
-    dislikes: [],
-    minutesToRead,
-  };
-
-  await adminDb.collection('posts').add(post);
+  
+  await db.post.create({
+    data: {
+      authorId: author.id,
+      title,
+      content,
+      likes: [],
+      dislikes: [],
+      minutesToRead,
+    },
+    include: {
+      author: true
+    }
+  })
 
   return NextResponse.json({ message: 'New post yay' });
 }

@@ -3,18 +3,16 @@
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 import ThemeSelector from './ThemeSelector';
-import { Session } from 'next-auth';
 import { useState } from 'react';
 import LoginModal from './LoginModal';
 import Image from 'next/image';
+import { SafeUser } from '@/typings';
 
 type Props = {
-  session: Session | null;
+  currentUser: SafeUser | null;
 };
 
-export default function Header({ session }: Props) {
-  // @ts-ignore
-  const username = session?.user?.username;
+export default function Header({ currentUser }: Props) {
   const [isModalOpen, setModalOpen] = useState(false);
 
   return (
@@ -32,7 +30,7 @@ export default function Header({ session }: Props) {
           </Link>
 
           <ThemeSelector />
-          {!session ? (
+          {!currentUser ? (
             <button
               className="rounded-md border border-accentLight bg-white px-4 py-2 dark:border-accentDark dark:bg-gray-900"
               onClick={() => setModalOpen(true)}
@@ -41,10 +39,10 @@ export default function Header({ session }: Props) {
             </button>
           ) : (
             <>
-              <p className="mr-4 hidden sm:block">{username}</p>
+              <p className="mr-4 hidden sm:block">{currentUser.username}</p>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={session.user?.image!}
+                src="https://firebasestorage.googleapis.com/v0/b/blog-gpt-af3da.appspot.com/o/tdQckCjYzazzxI1Gcoaf.png?alt=media&token=ec8917f7-58a1-4584-9092-915b576d1b5a"
                 alt="Profile picture"
                 className="h-9 w-9 cursor-pointer rounded-full hover:opacity-70"
                 onClick={() => signOut()}

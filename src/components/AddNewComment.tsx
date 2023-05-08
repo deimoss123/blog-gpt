@@ -2,14 +2,14 @@
 
 import { useRef, useState } from 'react';
 import UserIcon from './UserIcon';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
-import { useSession } from 'next-auth/react';
-import { db } from '@/firebase/firebase';
 import { useRouter } from 'next/navigation';
 import { ArrowPathIcon } from '@heroicons/react/24/solid';
 import LoginModal from './LoginModal';
+import { SafeUser } from '@/typings';
+import axios from 'axios';
 
 type Props = {
+  currentUser: SafeUser | null;
   postId: string;
   replyOptions?: {
     id: string;
@@ -20,6 +20,7 @@ type Props = {
 };
 
 export default function AddNewComment({
+  currentUser,
   postId,
   replyOptions,
   isFirstComment,
@@ -29,7 +30,6 @@ export default function AddNewComment({
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
-  const { data: session } = useSession();
   const router = useRouter();
 
   // TODO: make a cleaner textarea: https://css-tricks.com/the-cleanest-trick-for-autogrowing-textareas/
@@ -38,27 +38,14 @@ export default function AddNewComment({
 
   const onSubmit = async () => {
     if (!canSubmit) return;
-    if (!session) {
+    if (!currentUser) {
       setModalOpen(true);
       return;
-    }
-    const comment: PostComment = {
-      // @ts-ignore
-      authorId: session.user?.firestoreId,
-      content: input,
-      likes: [],
-      dislikes: [],
-      createdAt: serverTimestamp(),
-      postId,
-    };
-
-    if (replyOptions) {
-      comment.replyToId = replyOptions.id;
     }
 
     setInput('');
     setIsLoading(true);
-    await addDoc(collection(db, 'comments'), comment);
+    await axios.post('/api/new-comment', { postId, content: input, replyToId: replyOptions?.id || undefined });
     router.refresh();
     if (replyOptions) replyOptions.onClose();
     setIsLoading(false);
@@ -85,7 +72,7 @@ export default function AddNewComment({
             onChange={(e) => setInput(e.target.value)}
             rows={4}
             onClick={() => {
-              if (!session) {
+              if (!currentUser) {
                 textArea.current!.blur();
                 setModalOpen(true);
               }
