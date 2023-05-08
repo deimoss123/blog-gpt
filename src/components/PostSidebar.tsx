@@ -110,7 +110,7 @@ export default function PostSidebar({ postData, currentUser, comments }: Props) 
         <HandThumbUpIcon
           className={
             'h-7 w-7' +
-            (likedState === 'liked' ? ' fill-black' : '') +
+            (likedState === 'liked' ? ' fill-black dark:fill-white' : '') +
             (isMutating ? ' opacity-30' : '')
           }
         />
@@ -123,7 +123,7 @@ export default function PostSidebar({ postData, currentUser, comments }: Props) 
         <HandThumbDownIcon
           className={
             'h-7 w-7' +
-            (likedState === 'disliked' ? ' fill-black' : '') +
+            (likedState === 'disliked' ? ' fill-black dark:fill-white' : '') +
             (isMutating ? ' opacity-30' : '')
           }
         />

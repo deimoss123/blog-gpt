@@ -132,7 +132,7 @@ export default function Comment({ children, id, author, currentUser, data, topLe
                 <HandThumbUpIcon
                   className={
                     'h-6 w-6' +
-                    (likedState === 'liked' ? ' fill-black' : '') +
+                    (likedState === 'liked' ? ' fill-black dark:fill-white' : '') +
                     (isMutating ? ' opacity-30' : '')
                   }
                 />
@@ -145,7 +145,7 @@ export default function Comment({ children, id, author, currentUser, data, topLe
                 <HandThumbDownIcon
                   className={
                     'h-6 w-6' +
-                    (likedState === 'disliked' ? ' fill-black' : '') +
+                    (likedState === 'disliked' ? ' fill-black dark:fill-white' : '') +
                     (isMutating ? ' opacity-30' : '')
                   }
                 />
